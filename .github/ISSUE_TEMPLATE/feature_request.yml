@@ -1,0 +1,13 @@
+name: ✨ Предложить идею
+description: Новая функция или улучшение
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Что добавить или улучшить
+    validations: { required: true }
+  - type: textarea
+    id: why
+    attributes:
+      label: Зачем это нужно

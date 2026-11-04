@@ -1,0 +1,40 @@
+name: 🐞 Что-то не работает
+description: Ошибка в программе, не открывается сайт, не подключается Telegram
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Спасибо, что сообщили! Чем подробнее — тем быстрее починим.
+  - type: dropdown
+    id: module
+    attributes:
+      label: Что не работает
+      options: [Zapret (YouTube, Discord, сайты), Telegram прокси, DNS / нейросети, Интерфейс или установка, Другое]
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes:
+      label: Что случилось
+      description: Что делали, что ожидали и что получили
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes:
+      label: Версия ZapretTG
+      placeholder: "1.2.1 (Настройки → О программе)"
+  - type: input
+    id: windows
+    attributes:
+      label: Windows и провайдер
+      placeholder: "Windows 11 23H2, Ростелеком"
+  - type: input
+    id: strategy
+    attributes:
+      label: Стратегия zapret (если про zapret)
+      placeholder: "general (ALT)"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Логи
+      description: Вкладка «Логи» → «Копировать» (вставьте сюда), или файлы из C:\ProgramData\ZapretTG\logs
+      render: text

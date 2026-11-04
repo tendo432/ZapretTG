@@ -16,6 +16,13 @@
 
 </div>
 
+<details>
+<summary><b>🇬🇧 English</b></summary>
+
+**ZapretTG** is a Windows app that bundles [zapret](https://github.com/bol-van/zapret) DPI bypass (strategies from [zapret-discord-youtube](https://github.com/Flowseal/zapret-discord-youtube)), [tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) for Telegram Desktop and a geo-unblocking DNS for AI services (ChatGPT, Claude, Gemini, Copilot) behind one clean, translucent UI — with tray controls, autostart, auto-recovery and an installer. Upstream code is embedded unchanged.
+Download: [installer](https://github.com/tendo432/ZapretTG/releases/latest/download/ZapretTG-Setup.exe) · [single exe](https://github.com/tendo432/ZapretTG/releases/latest/download/ZapretTG.exe) · [portable zip](https://github.com/tendo432/ZapretTG/releases/latest/download/ZapretTG-portable.zip).
+</details>
+
 ## Установка
 
 Выберите любой способ — все они ставят одну и ту же программу.
@@ -88,6 +95,12 @@ set ONEDIR=1 && py -3.12 -m PyInstaller ZapretTG.spec   :: dist\ZapretTG\ (па�
 ```
 
 Релизы собираются автоматически в GitHub Actions на Windows при пуше тега `v*` (exe, portable.zip, установщик, SHA256SUMS) — с самопроверкой каждой сборки. Обновить встроенные утилиты: замените `resources/zapret` новым релизом zapret-discord-youtube, а `vendor/tgws/proxy` — папкой `proxy` из tg-ws-proxy.
+
+## Помочь проекту
+
+- ⭐ Поставьте звезду — так репозиторий быстрее находят другие.
+- 🐞 Нашли баг или подобрали стратегию под своего провайдера — напишите в [Issues](https://github.com/tendo432/ZapretTG/issues) или [Обсуждения](https://github.com/tendo432/ZapretTG/discussions).
+- 🔧 Pull request'ы приветствуются: `py -3.12 run.py` запускает программу без сборки.
 
 ## Благодарности и лицензии
 
