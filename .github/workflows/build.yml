@@ -1,0 +1,122 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt "pyinstaller>=6.16"
+
+      - name: Version
+        id: ver
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') { $v = $env:GITHUB_REF_NAME.TrimStart('v') }
+          else { $v = (Select-String -Path app/paths.py -Pattern 'APP_VERSION = "(.+)"').Matches[0].Groups[1].Value }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "Version: $v"
+
+      - name: Build single exe
+        run: pyinstaller --noconfirm --distpath out/onefile --workpath build/onefile ZapretTG.spec
+
+      - name: Build folder (portable / installer)
+        env:
+          ONEDIR: "1"
+        run: pyinstaller --noconfirm --distpath dist --workpath build/onedir ZapretTG.spec
+
+      - name: Self-test (real Windows)
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          foreach ($exe in @('out\onefile\ZapretTG.exe', 'dist\ZapretTG\ZapretTG.exe')) {
+            $log = Join-Path $env:RUNNER_TEMP ("selftest-" + [guid]::NewGuid().ToString('N') + ".txt")
+            $p = Start-Process -FilePath $exe -ArgumentList "--selftest=$log" -Wait -PassThru
+            Get-Content $log
+            if ($p.ExitCode -ne 0) { throw "Self-test failed for $exe (exit $($p.ExitCode))" }
+          }
+
+      - name: Build installer (Inno Setup)
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          & $iscc "/DAppVersion=${{ steps.ver.outputs.version }}" installer\ZapretTG.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          Copy-Item out\onefile\ZapretTG.exe release\ZapretTG.exe
+          Copy-Item dist\ZapretTG-Setup.exe release\ZapretTG-Setup.exe
+          Compress-Archive -Path dist\ZapretTG\* -DestinationPath release\ZapretTG-portable.zip -CompressionLevel Optimal
+          Get-ChildItem release | ForEach-Object {
+            "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name
+          } | Set-Content release\SHA256SUMS.txt -Encoding ascii
+          Get-Content release\SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZapretTG-${{ steps.ver.outputs.version }}
+          path: release/*
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ZapretTG ${{ steps.ver.outputs.version }}
+          body_path: docs/RELEASE_NOTES.md
+          files: release/*
+
+  scoop:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@v4
+        with:
+          path: art
+      - name: Update Scoop manifest
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          ZIP=$(find art -name ZapretTG-portable.zip | head -1)
+          HASH=$(sha256sum "$ZIP" | cut -d' ' -f1)
+          python3 - "$VER" "$HASH" <<'PY'
+          import json, sys
+          ver, h = sys.argv[1], sys.argv[2]
+          p = "bucket/zaprettg.json"
+          m = json.load(open(p, encoding="utf-8"))
+          m["version"] = ver
+          m["url"] = f"https://github.com/tendo432/ZapretTG/releases/download/v{ver}/ZapretTG-portable.zip"
+          m["hash"] = h
+          json.dump(m, open(p, "w", encoding="utf-8"), indent=4, ensure_ascii=False)
+          open(p, "a").write("\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bucket/zaprettg.json
+          git diff --cached --quiet || git commit -m "scoop: zaprettg ${VER}"
+          git push

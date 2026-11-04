@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+build/
+dist/
+out/
+release/
+*.spec.bak
+.venv/
+venv/
+build_assets/i*.png

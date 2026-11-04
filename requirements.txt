@@ -1,0 +1,5 @@
+PySide6-Essentials==6.8.1
+cryptography>=44
+httpx[http2]>=0.28
+certifi
+psutil>=6

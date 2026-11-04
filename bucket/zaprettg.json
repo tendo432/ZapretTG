@@ -1,0 +1,25 @@
+{
+    "version": "1.2.0",
+    "description": "zapret (обход DPI) + Telegram WS proxy + DNS для нейросетей — в одном приложении",
+    "homepage": "https://github.com/tendo432/ZapretTG",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {}
+    },
+    "url": "https://github.com/tendo432/ZapretTG/releases/download/v1.2.0/ZapretTG-portable.zip",
+    "hash": "",
+    "shortcuts": [
+        [
+            "ZapretTG.exe",
+            "ZapretTG"
+        ]
+    ],
+    "notes": [
+        "Добавьте C:\\ProgramData\\ZapretTG в исключения антивируса — иначе он может удалить winws.exe и WinDivert.",
+        "При первом запуске программа попросит права администратора (нужны драйверу WinDivert)."
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/tendo432/ZapretTG/releases/download/v$version/ZapretTG-portable.zip"
+    }
+}
