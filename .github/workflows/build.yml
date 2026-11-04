@@ -13,6 +13,9 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+      publish: ${{ steps.ver.outputs.publish }}
     steps:
       - uses: actions/checkout@v4
 
@@ -29,11 +32,22 @@ jobs:
       - name: Version
         id: ver
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if ($env:GITHUB_REF -like 'refs/tags/v*') { $v = $env:GITHUB_REF_NAME.TrimStart('v') }
           else { $v = (Select-String -Path app/paths.py -Pattern 'APP_VERSION = "(.+)"').Matches[0].Groups[1].Value }
           "version=$v" >> $env:GITHUB_OUTPUT
           Write-Host "Version: $v"
+          # публикуем релиз, если это тег или в main новая версия, для которой релиза ещё нет
+          $publish = 'false'
+          if ($env:GITHUB_REF -like 'refs/tags/v*') { $publish = 'true' }
+          elseif ($env:GITHUB_REF -eq 'refs/heads/main' -and $env:GITHUB_EVENT_NAME -ne 'pull_request') {
+            gh release view "v$v" --repo $env:GITHUB_REPOSITORY *> $null
+            if ($LASTEXITCODE -ne 0) { $publish = 'true' }
+          }
+          "publish=$publish" >> $env:GITHUB_OUTPUT
+          Write-Host "Publish: $publish"
 
       - name: Build single exe
         run: pyinstaller --noconfirm --distpath out/onefile --workpath build/onefile ZapretTG.spec
@@ -81,16 +95,19 @@ jobs:
           path: release/*
 
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: steps.ver.outputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.ver.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           name: ZapretTG ${{ steps.ver.outputs.version }}
           body_path: docs/RELEASE_NOTES.md
           files: release/*
 
   scoop:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: needs.build.outputs.publish == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,7 +118,7 @@ jobs:
           path: art
       - name: Update Scoop manifest
         run: |
-          VER="${GITHUB_REF_NAME#v}"
+          VER="${{ needs.build.outputs.version }}"
           ZIP=$(find art -name ZapretTG-portable.zip | head -1)
           HASH=$(sha256sum "$ZIP" | cut -d' ' -f1)
           python3 - "$VER" "$HASH" <<'PY'
