@@ -1,7 +1,7 @@
 ; Установщик ZapretTG (Inno Setup 6). Собирается в GitHub Actions:
 ;   iscc /DAppVersion=1.2.0 installer\ZapretTG.iss
 #ifndef AppVersion
-  #define AppVersion "1.2.0"
+  #define AppVersion "1.2.1"
 #endif
 #define AppName "ZapretTG"
 #define AppExe "ZapretTG.exe"
@@ -54,7 +54,7 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopico
 [Run]
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""Add-MpPreference -ExclusionPath '{app}','{commonappdata}\ZapretTG' -ErrorAction SilentlyContinue"""; Flags: runhidden; Tasks: defender; StatusMsg: "Добавление исключений Защитника..."
 Filename: "{app}\{#AppExe}"; Parameters: "--autostart-on"; Flags: runhidden waituntilterminated; Tasks: autostart; StatusMsg: "Настройка автозапуска..."
-Filename: "{app}\{#AppExe}"; Description: "Запустить {#AppName}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#AppExe}"; Description: "Запустить {#AppName}"; Flags: nowait postinstall skipifsilent runascurrentuser
 
 [UninstallRun]
 ; вернуть DNS, удалить задачу автозапуска и службы zapret/WinDivert

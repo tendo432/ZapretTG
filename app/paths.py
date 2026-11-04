@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 APP_NAME = "ZapretTG"
-APP_VERSION = "1.2.0"
+APP_VERSION = "1.2.1"
 
 IS_FROZEN = bool(getattr(sys, "frozen", False))
 IS_WINDOWS = sys.platform == "win32"
