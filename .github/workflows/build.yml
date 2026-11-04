@@ -48,6 +48,7 @@ jobs:
           }
           "publish=$publish" >> $env:GITHUB_OUTPUT
           Write-Host "Publish: $publish"
+          $global:LASTEXITCODE = 0
 
       - name: Build single exe
         run: pyinstaller --noconfirm --distpath out/onefile --workpath build/onefile ZapretTG.spec
