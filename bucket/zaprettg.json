@@ -1,13 +1,13 @@
 {
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "zapret (обход DPI) + Telegram WS proxy + DNS для нейросетей — в одном приложении",
     "homepage": "https://github.com/tendo432/ZapretTG",
     "license": "MIT",
     "architecture": {
         "64bit": {}
     },
-    "url": "https://github.com/tendo432/ZapretTG/releases/download/v1.2.0/ZapretTG-portable.zip",
-    "hash": "3990d68df457c367c74a41e245212ac9cdcf08025ae9a10df87e3d1b5bf6c9e2",
+    "url": "https://github.com/tendo432/ZapretTG/releases/download/v1.2.1/ZapretTG-portable.zip",
+    "hash": "5cac89d70b042b0e9b5af206bd8c29efd0d48862ce39ff058c8925e8acf778ca",
     "shortcuts": [
         [
             "ZapretTG.exe",
