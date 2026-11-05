@@ -32,6 +32,8 @@ jobs:
           pip install -r requirements.txt "pyinstaller>=6.16"
 
       - name: Verify bundled upstream code is unchanged
+        env:
+          PYTHONIOENCODING: utf-8
         run: python tools/verify_upstream.py
 
       - name: Version

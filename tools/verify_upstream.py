@@ -51,6 +51,10 @@ def compare(local: Path, up: Path, exclude=()) -> list:
 
 
 def main() -> int:
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # консоль Windows по умолчанию не печатает кириллицу
+    except Exception:
+        pass
     cfg = json.loads((ROOT / "UPSTREAM.json").read_text(encoding="utf-8"))
     ok = True
     with tempfile.TemporaryDirectory() as tmp:
