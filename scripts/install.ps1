@@ -3,7 +3,7 @@
     irm https://raw.githubusercontent.com/tendo432/ZapretTG/main/scripts/install.ps1 | iex
 
   Скачивает последний portable-релиз с GitHub, ставит в C:\Program Files\ZapretTG,
-  добавляет исключения Защитника, создаёт ярлыки и запускает программу.
+  по вашему согласию добавляет узкие исключения Защитника, создаёт ярлыки и запускает программу.
 #>
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
@@ -35,8 +35,19 @@ $asset = $rel.assets | Where-Object { $_.name -like '*portable.zip' } | Select-O
 if (-not $asset) { throw 'В релизе не найден portable.zip' }
 Write-Host "      версия $($rel.tag_name)"
 
-Write-Host '[2/5] Добавляю исключения Защитника Windows...'
-try { Add-MpPreference -ExclusionPath $dest, $data -ErrorAction Stop } catch { Write-Host '      не удалось (другой антивирус или «Защита от подделки») — добавьте папки вручную' -ForegroundColor Yellow }
+Write-Host '[2/5] Исключения Защитника Windows (необязательно)'
+Write-Host '      Защитник иногда удаляет winws.exe и драйвер WinDivert как «HackTool» — тогда обход не работает.'
+Write-Host '      Можно исключить ТОЛЬКО две папки bin с этими файлами (вся остальная программа проверяется как обычно):'
+$binApp  = Join-Path $dest '_internal\resources\zapret\bin'
+$binData = Join-Path $data 'zapret\bin'
+Write-Host "        $binApp"
+Write-Host "        $binData"
+$ans = 'n'
+if ($env:ZAPRETTG_DEFENDER -eq '1') { $ans = 'y' } else { try { $ans = Read-Host '      Добавить эти папки в исключения? [y/N]' } catch {} }
+if ($ans -match '^(y|д|yes|да)$') {
+    try { Add-MpPreference -ExclusionPath $binApp, $binData -ErrorAction Stop; Write-Host '      добавлено' -ForegroundColor Green }
+    catch { Write-Host '      не удалось (другой антивирус или «Защита от подделки») — можно добавить позже кнопкой в программе' -ForegroundColor Yellow }
+} else { Write-Host '      пропущено — если обход перестанет работать, добавьте позже: вкладка «Проверка» в программе' }
 
 Write-Host '[3/5] Скачиваю...'
 $tmp = Join-Path $env:TEMP "zaprettg-$([guid]::NewGuid().ToString('N')).zip"

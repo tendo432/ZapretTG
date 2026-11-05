@@ -24,5 +24,5 @@ Remove-Item (Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 
 Remove-Item $dest -Recurse -Force -ErrorAction SilentlyContinue
 $ans = Read-Host 'Удалить настройки и логи (C:\ProgramData\ZapretTG)? [y/N]'
 if ($ans -match '^(y|д)') { Remove-Item $data -Recurse -Force -ErrorAction SilentlyContinue }
-try { Remove-MpPreference -ExclusionPath $dest, $data -ErrorAction SilentlyContinue } catch {}
+try { Remove-MpPreference -ExclusionPath (Join-Path $dest '_internal\resources\zapret\bin'), (Join-Path $data 'zapret\bin') -ErrorAction SilentlyContinue } catch {}
 Write-Host 'ZapretTG удалён.' -ForegroundColor Green

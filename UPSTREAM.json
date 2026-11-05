@@ -1,0 +1,25 @@
+{
+  "zapret-discord-youtube": {
+    "repo": "https://github.com/Flowseal/zapret-discord-youtube",
+    "commit": "2401b7a13837139b0265632464ba563dddbf80d8",
+    "version": "1.10.4",
+    "local": "resources/zapret",
+    "upstream": ".",
+    "exclude": [".git", ".github", ".gitignore", ".gitattributes"]
+  },
+  "tg-ws-proxy": {
+    "repo": "https://github.com/Flowseal/tg-ws-proxy",
+    "commit": "2085861957070eeea07990a522b29f42e5230210",
+    "version": "1.11.4",
+    "pairs": [
+      ["vendor/tgws/proxy", "proxy"],
+      ["vendor/tgws/utils/__init__.py", "utils/__init__.py"],
+      ["vendor/tgws/utils/update_check.py", "utils/update_check.py"],
+      ["vendor/tgws/utils/diagnostics.py", "utils/diagnostics.py"],
+      ["vendor/tgws/utils/logging_setup.py", "utils/logging_setup.py"],
+      ["vendor/tgws/ui/connectivity.py", "ui/connectivity.py"],
+      ["vendor/tgws/ui/i18n", "ui/i18n"],
+      ["vendor/tgws/LICENSE", "LICENSE"]
+    ]
+  }
+}

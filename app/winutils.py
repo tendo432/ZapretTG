@@ -369,7 +369,7 @@ def defender_add_exclusions(paths: List[str]) -> Tuple[bool, str]:
     quoted = ",".join("'" + p.replace("'", "''") + "'" for p in paths)
     rc, out = powershell(f"Add-MpPreference -ExclusionPath {quoted} -ErrorAction Stop; 'OK'", timeout=60)
     if rc == 0 and "OK" in out:
-        return True, "Папки добавлены в исключения Защитника Windows"
+        return True, "Папки bin добавлены в исключения Защитника Windows"
     return False, ("Не удалось добавить исключения автоматически (возможно, включена «Защита от подделки» "
                    "или установлен другой антивирус). Добавьте папку вручную.\n" + out.strip()[:300])
 

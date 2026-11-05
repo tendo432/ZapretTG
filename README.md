@@ -11,8 +11,10 @@
 [![Build](https://github.com/tendo432/ZapretTG/actions/workflows/build.yml/badge.svg)](https://github.com/tendo432/ZapretTG/actions/workflows/build.yml)
 [![Release](https://img.shields.io/github/v/release/tendo432/ZapretTG?label=%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F)](https://github.com/tendo432/ZapretTG/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/tendo432/ZapretTG/total?label=%D1%81%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D0%B9)](https://github.com/tendo432/ZapretTG/releases)
+[![License](https://img.shields.io/github/license/tendo432/ZapretTG?label=%D0%BB%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F)](LICENSE)
+[![Security](https://img.shields.io/badge/%D0%B1%D0%B5%D0%B7%D0%BE%D0%BF%D0%B0%D1%81%D0%BD%D0%BE%D1%81%D1%82%D1%8C-SECURITY.md-2ee6a8)](SECURITY.md)
 
-<img src="docs/screenshots/home.png" width="860" alt="Главный экран ZapretTG">
+<img src="docs/demo.gif" width="860" alt="ZapretTG: включение zapret, Telegram-прокси и DNS">
 
 </div>
 
@@ -29,21 +31,21 @@ Download: [installer](https://github.com/tendo432/ZapretTG/releases/latest/downl
 
 | Способ | Для кого | Как |
 |---|---|---|
-| **Установщик** (рекомендуется) | обычная установка с ярлыками и удалением через «Приложения» | [ZapretTG-Setup.exe](https://github.com/tendo432/ZapretTG/releases/latest/download/ZapretTG-Setup.exe) → запустить → «Далее» |
-| **Одной командой** | быстро, без кликов | PowerShell: `irm https://raw.githubusercontent.com/tendo432/ZapretTG/main/scripts/install.ps1 \| iex` |
+| **Установщик** (рекомендуется) | обычная установка: ярлыки, автозапуск по желанию, удаление через «Приложения» | [ZapretTG-Setup.exe](https://github.com/tendo432/ZapretTG/releases/latest/download/ZapretTG-Setup.exe) → запустить → «Далее» |
+| **Одной командой** | быстро, без кликов ([что делает скрипт](scripts/install.ps1)) | PowerShell: `irm https://raw.githubusercontent.com/tendo432/ZapretTG/main/scripts/install.ps1 \| iex` |
 | **Один exe** | без установки, носить на флешке | [ZapretTG.exe](https://github.com/tendo432/ZapretTG/releases/latest/download/ZapretTG.exe) → запустить |
 | **Portable-папка** | без установки, запускается быстрее одного exe | [ZapretTG-portable.zip](https://github.com/tendo432/ZapretTG/releases/latest/download/ZapretTG-portable.zip) → распаковать → `ZapretTG.exe` |
 | **Scoop** | для тех, кто пользуется Scoop | `scoop bucket add zaprettg https://github.com/tendo432/ZapretTG` → `scoop install zaprettg/zaprettg` |
 | **Из исходников** | разработчикам | см. [Сборка](#сборка-из-исходников) |
 
-Контрольные суммы всех файлов — в `SHA256SUMS.txt` в каждом [релизе](https://github.com/tendo432/ZapretTG/releases).
+У каждого файла в [релизе](https://github.com/tendo432/ZapretTG/releases) есть SHA-256, ссылка на VirusTotal и аттестация происхождения — как проверить, см. [Безопасность](#безопасность-и-доверие).
 
 ### Перед первым запуском
 
-- **Антивирус.** Защитник Windows часто помечает `winws.exe` и драйвер `WinDivert` как «HackTool» и удаляет их — тогда обход перестаёт работать. Это ложное срабатывание (так бывает со всеми сборками zapret). Установщик и команда PowerShell сами добавляют исключения; для exe/zip добавьте вручную папку программы и `C:\ProgramData\ZapretTG` — или нажмите кнопку на вкладке «Проверка».
-- **SmartScreen** может предупредить, что программа не подписана: «Подробнее» → «Выполнить в любом случае».
-- **Права администратора** нужны драйверу WinDivert — программа запросит их сама.
-- Ошибка **«Файл занят другой программой»** при запуске — Защитник ещё проверяет exe или поместил его в карантин: подождите 20 секунд или разрешите файл в «Журнале защиты».
+- **Права администратора** нужны драйверу WinDivert — программа запросит их через обычное окно UAC.
+- **SmartScreen** может предупредить, что программа не подписана: «Подробнее» → «Выполнить в любом случае». Хотите убедиться в файле — проверьте его хеш и происхождение ([как](SECURITY.md#как-проверить-скачанный-файл)).
+- **Антивирус.** ZapretTG **не трогает** настройки Защитника сам. Если Защитник удалит `winws.exe` или драйвер `WinDivert` (это известное ложное срабатывание `HackTool` для всех сборок zapret — [почему](SECURITY.md#почему-антивирус-может-ругаться)), можно по желанию исключить **только две папки `bin`** с этими файлами: галочкой в установщике (по умолчанию выключена), ответом «y» в скрипте установки или кнопкой «Проверка → Исключения Защитника…» в программе.
+- Ошибка **«Файл занят другой программой»** — Защитник ещё проверяет exe или поместил его в карантин: подождите 20 секунд или посмотрите «Журнал защиты».
 
 ## Что умеет
 
@@ -70,6 +72,36 @@ Download: [installer](https://github.com/tendo432/ZapretTG/releases/latest/downl
   <img src="docs/screenshots/home-light.png" width="49%" alt="Светлая тема">
 </p>
 
+## Безопасность и доверие
+
+Программа работает с правами администратора и меняет сетевые настройки, поэтому всё прозрачно и проверяемо — подробности в [SECURITY.md](SECURITY.md).
+
+- **Сборка только автоматическая**: каждый релиз собирается в [GitHub Actions](https://github.com/tendo432/ZapretTG/actions/workflows/build.yml) на чистом Windows из открытого кода и проходит самопроверку. Лог каждой сборки открыт.
+- **Чужой код не изменён**: сборка побайтово сверяет встроенные zapret и tg-ws-proxy с оригиналами ([`tools/verify_upstream.py`](tools/verify_upstream.py), коммиты — в [`UPSTREAM.json`](UPSTREAM.json)). Проверить самому: `python tools/verify_upstream.py`.
+- **Подлинность файлов**: SHA-256 и VirusTotal у каждого файла в описании релиза; `gh attestation verify ZapretTG-Setup.exe --repo tendo432/ZapretTG` подтверждает, что файл собран здесь и не подменён.
+- **Без телеметрии**: никакой аналитики и аккаунтов. Полный список того, куда и зачем подключается программа, — в [SECURITY.md](SECURITY.md#куда-подключается-программа).
+- **Всё обратимо**: DNS, службы, автозапуск, hosts и исключения Защитника возвращаются как было при выключении функции или удалении программы.
+- **Антивирус — только с вашего согласия** и только для папок с `winws.exe`/WinDivert, а не всей программы.
+
+## Сравнение
+
+ZapretTG не заменяет оригинальные проекты, а объединяет их: стратегии и прокси — те же самые, без изменений. Если вам нужен только один инструмент и вы привыкли к консоли, оригиналы легче и обновляются первыми.
+
+| | **ZapretTG** | [zapret-discord-youtube](https://github.com/Flowseal/zapret-discord-youtube) | [tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) | [GoodbyeDPI](https://github.com/ValdikSS/GoodbyeDPI) |
+|---|---|---|---|---|
+| Обход DPI (YouTube, Discord) | ✅ стратегии zapret-discord-youtube | ✅ | — | ✅ свои режимы |
+| Telegram-прокси | ✅ встроенный tg-ws-proxy | — | ✅ | — |
+| DNS для нейросетей | ✅ | — | — | — |
+| Интерфейс | окно + трей | `.bat`-файлы и консольное меню | значок в трее, окно настроек | консоль, `.cmd`-скрипты |
+| Смена стратегии | в один клик, на лету | запуск другого `.bat` | — | параметры запуска |
+| Тест стратегий | ✅ оригинальный скрипт | ✅ | — | — |
+| Служба Windows | ✅ по желанию | ✅ | — | ✅ скриптом |
+| Автозапуск | ✅ планировщик, без UAC | через службу | ✅ | через службу |
+| Автоперезапуск после сбоя | ✅ zapret и прокси, с нарастающей паузой | — | перезапуск слушающего сокета | — |
+| Установщик / удаление | ✅ Setup, PowerShell, Scoop, portable | архив | exe | архив |
+| Размер | ~35 МБ (Python и Qt внутри) | легче | легче | легче всех |
+| Открытый код | ✅ MIT | ✅ MIT | ✅ MIT | ✅ Apache-2.0 |
+
 ## Частые вопросы
 
 **YouTube/Discord не открываются.** На главной выберите другую стратегию (чаще всего помогают ALT, ALT2, FAKE TLS AUTO) или нажмите «Тест стратегий» — он сам проверит, какие работают у вашего провайдера.
@@ -77,6 +109,8 @@ Download: [installer](https://github.com/tendo432/ZapretTG/releases/latest/downl
 **Telegram не подключается.** Включите прокси и нажмите «Подключить Telegram». Если Telegram не открылся — «Копировать ссылку», отправьте её себе в «Избранное» и нажмите на неё.
 
 **Нейросеть всё равно пишет, что недоступна в регионе.** Перезапустите браузер; выключите в браузере «Безопасный DNS» (или выберите «текущего поставщика»); нажмите «Проверить» на вкладке DNS. Адреса DNS-сервисов иногда меняются — актуальные на их сайтах, их можно указать в «Свой DNS».
+
+**Защитник удалил winws.exe.** «Проверка → Восстановить файлы zapret» вернёт их, а «Исключения Защитника…» (по желанию) не даст удалить снова — см. [SECURITY.md](SECURITY.md#почему-антивирус-может-ругаться).
 
 **Как удалить.** Установщик — через «Параметры → Приложения». Установка командой — `irm https://raw.githubusercontent.com/tendo432/ZapretTG/main/scripts/uninstall.ps1 | iex`. Portable — закройте программу (трей → Выход) и удалите папку. При удалении DNS, автозапуск и службы возвращаются в исходное состояние.
 

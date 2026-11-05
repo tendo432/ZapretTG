@@ -1,7 +1,7 @@
 ; Установщик ZapretTG (Inno Setup 6). Собирается в GitHub Actions:
 ;   iscc /DAppVersion=1.2.0 installer\ZapretTG.iss
 #ifndef AppVersion
-  #define AppVersion "1.2.1"
+  #define AppVersion "1.2.2"
 #endif
 #define AppName "ZapretTG"
 #define AppExe "ZapretTG.exe"
@@ -41,7 +41,7 @@ Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "Ярлык на рабочем столе"; GroupDescription: "Ярлыки:"
 Name: "autostart"; Description: "Запускать вместе с Windows (свёрнуто в трей)"; GroupDescription: "Запуск:"
-Name: "defender"; Description: "Добавить в исключения Защитника Windows (рекомендуется — иначе он может удалить winws.exe и WinDivert)"; GroupDescription: "Антивирус:"
+Name: "defender"; Description: "Добавить в исключения Защитника только папки с winws.exe и WinDivert (необязательно — включите, если Защитник их удаляет)"; GroupDescription: "Антивирус (по желанию):"; Flags: unchecked
 
 [Files]
 Source: "..\dist\ZapretTG\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -52,14 +52,14 @@ Name: "{group}\Удалить {#AppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopicon
 
 [Run]
-Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""Add-MpPreference -ExclusionPath '{app}','{commonappdata}\ZapretTG' -ErrorAction SilentlyContinue"""; Flags: runhidden; Tasks: defender; StatusMsg: "Добавление исключений Защитника..."
+Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""Add-MpPreference -ExclusionPath '{app}\_internal\resources\zapret\bin','{commonappdata}\ZapretTG\zapret\bin' -ErrorAction SilentlyContinue"""; Flags: runhidden; Tasks: defender; StatusMsg: "Добавление исключений Защитника..."
 Filename: "{app}\{#AppExe}"; Parameters: "--autostart-on"; Flags: runhidden waituntilterminated; Tasks: autostart; StatusMsg: "Настройка автозапуска..."
 Filename: "{app}\{#AppExe}"; Description: "Запустить {#AppName}"; Flags: nowait postinstall skipifsilent runascurrentuser
 
 [UninstallRun]
 ; вернуть DNS, удалить задачу автозапуска и службы zapret/WinDivert
 Filename: "{app}\{#AppExe}"; Parameters: "--cleanup"; Flags: runhidden waituntilterminated; RunOnceId: "Cleanup"
-Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""Remove-MpPreference -ExclusionPath '{app}','{commonappdata}\ZapretTG' -ErrorAction SilentlyContinue"""; Flags: runhidden; RunOnceId: "Defender"
+Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Command ""Remove-MpPreference -ExclusionPath '{app}\_internal\resources\zapret\bin','{commonappdata}\ZapretTG\zapret\bin' -ErrorAction SilentlyContinue"""; Flags: runhidden; RunOnceId: "Defender"
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"

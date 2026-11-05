@@ -26,9 +26,9 @@ class DiagnosticsPage(Page):
                             button("Сброс сети", "danger", "refresh", self._net_reset,
                                    tip="netsh winsock reset и др. — если не подходит ни одна стратегия"),
                             None))
-        c.lay.addLayout(row(button("Добавить в исключения Защитника", "", "shield", self._defender,
-                                   tip="Защитник Windows часто удаляет winws.exe и WinDivert — из-за этого "
-                                       "обход перестаёт работать"),
+        c.lay.addLayout(row(button("Исключения Защитника…", "", "shield", self._defender,
+                                   tip="По желанию: исключить только папки с winws.exe и WinDivert, "
+                                       "если Защитник их удаляет"),
                             button("Восстановить файлы zapret", "", "download", self._repair,
                                    tip="Вернуть winws.exe и WinDivert, если их удалил антивирус"),
                             None))
@@ -85,14 +85,19 @@ class DiagnosticsPage(Page):
 
     def _defender(self) -> None:
         import sys
-        from ..paths import DATA_DIR, IS_FROZEN
-        paths = [str(DATA_DIR)]
-        if IS_FROZEN:
-            paths.append(sys.executable)
-        if not ConfirmDialog.ask(self, "Исключения Защитника",
-                                 "Добавить в исключения Защитника Windows:\n\n" + "\n".join(paths) +
-                                 "\n\nWinDivert и winws.exe — не вирусы, но антивирусы часто помечают их как "
-                                 "«HackTool» и удаляют, из-за чего обход перестаёт работать.", "Добавить"):
+        from ..paths import BUNDLED_ZAPRET, IS_FROZEN
+        # только папки с winws.exe и WinDivert — не вся программа
+        paths = [str(self.ctx.zapret.bin_dir)]
+        bundled = BUNDLED_ZAPRET / "bin"
+        if IS_FROZEN and "_MEI" not in str(bundled):  # у одиночного exe это временная папка — её не исключаем
+            paths.append(str(bundled))
+        if not ConfirmDialog.ask(
+                self, "Исключения Защитника (по желанию)",
+                "Защитник иногда помечает winws.exe и драйвер WinDivert как «HackTool» и удаляет их — тогда обход "
+                "не работает. Это известное ложное срабатывание для всех сборок zapret.\n\n"
+                "Будут исключены ТОЛЬКО эти папки (остальное Защитник проверяет как обычно):\n\n"
+                + "\n".join(paths) + "\n\nУбрать исключения можно в «Безопасность Windows → Исключения».",
+                "Добавить"):
             return
         run_bg(lambda: winutils.defender_add_exclusions(paths), lambda r: self.ctx.toast(r[1], "ok" if r[0] else "err", 9000))
 
